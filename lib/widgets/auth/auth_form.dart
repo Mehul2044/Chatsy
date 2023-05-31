@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import '../pickers/user_image_picker.dart';
 
 class AuthForm extends StatefulWidget {
   final Function submitForm;
@@ -15,6 +19,7 @@ class _AuthFormState extends State<AuthForm> {
   bool isLoginFormLoading = false;
   bool isSendingMail = false;
   bool isObscureText = true;
+  File? _userDisplayPicture;
 
   final _form = GlobalKey<FormState>();
 
@@ -22,16 +27,27 @@ class _AuthFormState extends State<AuthForm> {
   String? username;
   late String password;
 
+  void _pickedImage(File? image) {
+    _userDisplayPicture = image;
+  }
+
   Future<void> _saveForm() async {
     FocusScope.of(context).unfocus();
     bool? isValidate = _form.currentState?.validate();
     if (isValidate == null || !isValidate) {
       return;
+    } else if (_userDisplayPicture == null && !isLogin) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Please pick an image as a display picture."),
+        duration: Duration(seconds: 3),
+      ));
+      return;
     } else {
       _form.currentState?.save();
       setState(() => isLoginFormLoading = true);
       try {
-        await widget.submitForm(email, password, username, isLogin);
+        await widget.submitForm(
+            email, password, username, _userDisplayPicture, isLogin);
       } finally {
         setState(() => isLoginFormLoading = false);
       }
@@ -147,6 +163,8 @@ class _AuthFormState extends State<AuthForm> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  if (!isLogin)
+                    UserImagePicker(imagePickFunction: _pickedImage),
                   TextFormField(
                     key: const ValueKey("email"),
                     keyboardType: TextInputType.emailAddress,

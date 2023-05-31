@@ -68,6 +68,12 @@ class MyApp extends StatelessWidget {
           bodyMedium: TextStyle(color: Colors.white),
           titleMedium:
               TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          titleSmall: TextStyle(color: Colors.grey),
+        ),
+        dividerTheme: const DividerThemeData(
+          thickness: 0.5,
+          color: Colors.black,
+          space: 70,
         ),
       ),
       home: StreamBuilder(

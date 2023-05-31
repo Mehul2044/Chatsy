@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'user_profile_screen.dart';
 
 import '../widgets/chat/new_message.dart';
 import '../widgets/chat/messages.dart';
@@ -17,9 +18,22 @@ class ChatScreen extends StatelessWidget {
           PopupMenuButton(
             itemBuilder: (context) => [
               PopupMenuItem(
+                value: "userProfile",
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Icon(
+                      Icons.person,
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                    const Text("Your Profile"),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
                 value: "logout",
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Icon(Icons.exit_to_app,
                         color: Theme.of(context).colorScheme.error),
@@ -31,6 +45,10 @@ class ChatScreen extends StatelessWidget {
             onSelected: (value) {
               if (value == "logout") {
                 FirebaseAuth.instance.signOut();
+              }
+              if (value == "userProfile") {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const UserProfileScreen()));
               }
             },
           ),
